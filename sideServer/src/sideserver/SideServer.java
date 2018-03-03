@@ -132,7 +132,7 @@ class Send extends Thread {
 
             if (SideServer.send) {
                 try {
-                    
+
                     String mess1 = SideServer.mess;
                     String mm = "";
                     SideServer.mess = "";
@@ -153,11 +153,11 @@ class Send extends Thread {
                                 m2.ans = false;
 
                             } else {
-                                
+
                                 stmt = SideServer.c.con.prepareStatement("insert into user_details values(?,?,?,?)");
                                 stmt.setString(1, m1.userid1);
                                 stmt.setString(2, m1.pwd);
-                                
+
                                 stmt.setString(3, m1.pic);
                                 stmt.setInt(4, m1.gender);
                                 stmt.executeUpdate();
@@ -174,30 +174,54 @@ class Send extends Thread {
 
                                 File outputfile = new File("image.jpg");
                                 ImageIO.write(image, "jpg", outputfile);
-                                */
-                            
+                                 */
+
                             }
+                            break;
                         }
                         case 2: {
+                            stmt = SideServer.c.con.prepareStatement("select userid,gender,pic from user_details where userid = ? and pwd = ?");
+                            stmt.setString(1, m1.userid1);
+                            stmt.setString(2, m1.pwd);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                rs.absolute(1);
+                                m2.gender=rs.getInt(2);
+                                m2.pic=rs.getString(3);
+                                m2.from = 1;
+                                m2.ans = true;
+                                m2.userid1=m1.userid1;
+                                //System.out.println(m2.gender);
+                                //System.out.println(m2.pic);
+                                System.out.println("success");
 
+                            } else {
+
+                                System.out.println("failure");
+                                m2.from = 1;
+                                
+                                
+                                m2.ans = false;
+                            }
+                            break;
                         }
                         case 3: {
-
+                            break;
                         }
                         case 4: {
-
+                            break;
                         }
                         case 5: {
-
+                            break;
                         }
                         case 6: {
-
+                            break;
                         }
                         case 7: {
-
+                            break;
                         }
                         case 8: {
-
+                            break;
                         }
 
                     }
