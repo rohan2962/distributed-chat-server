@@ -8,26 +8,16 @@ package sideserver;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
-import java.util.stream.Stream;
 import com.google.gson.Gson;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.sql.Blob;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import sun.misc.BASE64Decoder;
 
 /**
  *
@@ -84,7 +74,7 @@ public class SideServer {
 
 }
 
-class message {
+class message implements Cloneable {
 
     int from;
     int type;
@@ -93,23 +83,14 @@ class message {
     int gender;
     boolean ans;
 
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     message() {
 
     }
 
-    public message(message m) {
-        this.ans = m.ans;
-        this.from = m.from;
-        this.gender = m.gender;
-        this.groupid = m.groupid;
-        this.message = m.message;
-        this.pic = m.pic;
-        this.pwd = m.pwd;
-        this.type = m.type;
-        this.userid1 = m.userid1;
-        this.userid2 = m.userid2;
-        this.group_type = m.group_type;
-    }
 }
 
 class Read extends Thread {
@@ -154,10 +135,10 @@ class Send extends Thread {
                 String mm;
                 message m1, m2;
                 Gson gson = new Gson();
-                System.out.println(mess1);
+                //System.out.println(mess1);
                 m1 = gson.fromJson(mess1, message.class);
-                System.out.println(m1.type);
-                m2 = new message(m1);
+                //System.out.println(m1.type);
+                m2 = (message) m1.clone();
                 switch (m1.type) {
                     case 1: {
 
@@ -345,11 +326,14 @@ class Send extends Thread {
 
                 }
                 mm = gson.toJson(m2);
-                DatagramPacket dp = new DatagramPacket(mm.getBytes(), mm.length(), SideServer.ip, 3000);
+                System.out.println(mm);
+                DatagramPacket dp = new DatagramPacket(mm.getBytes(), mm.length(), SideServer.ip, 5000);
                 SideServer.ds1.send(dp);
             } catch (IOException ex) {
                 Logger.getLogger(Send.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
+                Logger.getLogger(Send.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (CloneNotSupportedException ex) {
                 Logger.getLogger(Send.class.getName()).log(Level.SEVERE, null, ex);
             }
 
