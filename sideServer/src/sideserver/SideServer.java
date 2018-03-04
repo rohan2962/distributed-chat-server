@@ -92,13 +92,26 @@ class message {
 
     int from;
     int type;
-    String userid1, userid2, groupid, message, pwd;
+    String userid1, userid2, groupid, message, pwd,group_type;
     String pic;
     int gender;
     boolean ans;
 
     message() {
 
+    }
+    public message(message m){
+        this.ans=m.ans;
+        this.from=m.from;
+        this.gender=m.gender;
+        this.groupid=m.groupid;
+        this.message=m.message;
+        this.pic=m.pic;
+        this.pwd=m.pwd;
+        this.type=m.type;
+        this.userid1=m.userid1;
+        this.userid2=m.userid2;
+        this.group_type=m.group_type;
     }
 }
 
@@ -136,12 +149,12 @@ class Send extends Thread {
                     String mess1 = SideServer.mess;
                     String mm = "";
                     SideServer.mess = "";
-                    message m1, m2 = new message();
+                    message m1, m2;
                     Gson gson = new Gson();
                     System.out.println(mess1);
                     m1 = gson.fromJson(mess1, message.class);
                     System.out.println(m1.type);
-
+                    m2=new message(m1);
                     switch (m1.type) {
                         case 1: {
 
@@ -186,11 +199,11 @@ class Send extends Thread {
                             rs = stmt.executeQuery();
                             if (rs.next()) {
                                 rs.absolute(1);
-                                m2.gender=rs.getInt(2);
-                                m2.pic=rs.getString(3);
+                                m2.gender = rs.getInt(2);
+                                m2.pic = rs.getString(3);
                                 m2.from = 1;
                                 m2.ans = true;
-                                m2.userid1=m1.userid1;
+                                m2.userid1 = m1.userid1;
                                 //System.out.println(m2.gender);
                                 //System.out.println(m2.pic);
                                 System.out.println("success");
@@ -199,28 +212,131 @@ class Send extends Thread {
 
                                 System.out.println("failure");
                                 m2.from = 1;
-                                
-                                
+
                                 m2.ans = false;
                             }
                             break;
                         }
                         case 3: {
+                            stmt = SideServer.c.con.prepareStatement("select messages from group_conv where groupid=?");
+                            stmt.setString(1, m1.groupid);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                String messa;
+                                rs.absolute(1);
+                                messa = rs.getString(1);
+                                messa = messa + m1.message;
+                                int i = 0, j = 0;
+                                while (messa.length() - j > 1000) {
+                                    i++;
+                                    if (messa.charAt(i) == '\n') {
+                                        j = i + 1;
+                                    }
+                                }
+                                messa = messa.substring(j);
+                                stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
+                                stmt.setString(1, m1.groupid);
+                                stmt.setString(2, messa);
+                                stmt.executeUpdate();
+                                m2.groupid=m1.groupid;
+                                m2.message=messa;
+                                m2.from = 1;
+                                m2.ans = true;
+                            } else {
+                                m2.from = 1;
+                                m2.ans = false;
+                            }
+
                             break;
                         }
                         case 4: {
+                            stmt = SideServer.c.con.prepareStatement("select userid,gender,pic from user_details where userid=?");
+                            stmt.setString(1, m1.userid2);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                rs.absolute(1);
+                                m2.userid2 = rs.getString(1);
+                                m2.gender = rs.getInt(2);
+                                m2.pic = rs.getString(3);
+                                m2.from = 1;
+                                m2.userid1 = m1.userid1;
+                            }
+
                             break;
                         }
                         case 5: {
+                            stmt = SideServer.c.con.prepareStatement("select groupid,messages from group_conv where groupid=?");
+                            stmt.setString(1, m1.groupid);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                m2.ans = false;
+                                m2.from = 1;
+                            } else {
+                                m2.ans = true;
+                                m2.from = 1;
+                                String messa = m1.userid1 + " has created the group " + m1.groupid + ".\n";
+                               
+                                m2.message = messa;
+                                stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
+                                stmt.setString(1, m1.groupid);
+                                stmt.setString(2, messa);
+                                stmt.executeUpdate();
+                                m2.groupid = m1.groupid;
+                            }
                             break;
                         }
                         case 6: {
+                            String messa1 = m1.userid1 + " has joined the group.\n";
+                            stmt = SideServer.c.con.prepareStatement("select messages from group_conv where groupid=?");
+                            stmt.setString(1, m1.groupid);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                String messa;
+                                rs.absolute(1);
+                                messa = rs.getString(1);
+                                messa = messa + messa1;
+                                int i = 0, j = 0;
+                                while (messa.length() - j > 1000) {
+                                    i++;
+                                    if (messa.charAt(i) == '\n') {
+                                        j = i + 1;
+                                    }
+                                }
+                                messa = messa.substring(j);
+                                stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
+                                stmt.setString(1, m1.groupid);
+                                stmt.setString(2, messa);
+                                stmt.executeUpdate();
+                                m2.message=messa;
+                                m2.from = 1;
+                                m2.ans = true;
+                            } else {
+                                m2.from = 1;
+                                m2.ans = false;
+                            }
                             break;
                         }
                         case 7: {
+                            m2.from=1;
                             break;
                         }
                         case 8: {
+
+                            stmt = SideServer.c.con.prepareStatement("select messages from group_conv where groupid=?");
+                            stmt.setString(1, m1.groupid);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                String messa;
+                                rs.absolute(1);
+                                messa = rs.getString(1);
+                                m2.groupid=m1.groupid;
+                                m2.message=messa;
+                                m2.from = 1;
+                                m2.ans = true;
+                            } else {
+                                m2.from = 1;
+                                m2.ans = false;
+                            }
                             break;
                         }
 
