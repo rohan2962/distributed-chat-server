@@ -27,7 +27,7 @@ public class db_connect {
         
   
        Class.forName("com.mysql.jdbc.Driver");
-       con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/Server", "server_1", "server@1");
+       con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/Main_Server", "main_server", "main@server");
         
         main_server a=new main_server();
         
