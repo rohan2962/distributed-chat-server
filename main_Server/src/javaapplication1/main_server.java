@@ -188,17 +188,48 @@ public class main_server {
 
                                         mess.group_type = "Private";
                                         mess.userid2 = user;
-                                        InetAddress ipAdd=getServer(mess.groupid);
+                                        InetAddress ipAdd = getServer(mess.groupid);
                                         Send t = new Send(mess, ipAdd);
                                         t.start();
 
                                     }
+                                } else {
+                                    Send t = new Send(mess, main_server.tempip.get(mess.userid1));
+                                    t.start();
                                 }
+                                main_server.tempip.remove(mess.userid1);
 
                                 break;
                             }
                             case 2: {
                                 if (m.ans) {
+                                    main_server.ip.put(m.userid1, main_server.tempip.get(m.userid1));
+                                    main_server.tempip.remove(mess.userid1);
+                                    stmt=db_connect.con.prepareStatement("select groupid from group_data where type=?");
+                                    stmt.setString(1,"Public");
+                                    rs=stmt.executeQuery();
+                                    int i=1;
+                                    String s="";
+                                    while(rs.next())
+                                    {
+                                        rs.absolute(i++);
+                                        s=s+","+rs.getString(1);
+                                        
+                                    }
+                                    stmt=db_connect.con.prepareStatement("select groupid from group_data where userid=? and type=?");
+                                    stmt.setString(1, m.userid1);
+                                    stmt.setString(2,"Private");
+                                    rs=stmt.executeQuery();
+                                    i=1;
+                                    while(rs.next())
+                                    {
+                                        rs.absolute(i++);
+                                        s=s+","+rs.getString(1);
+                                        
+                                    }
+                                    mess.message=s;
+                                    Send t=new Send(mess,main_server.ip.get(mess.userid1));
+                                    t.start();
 
                                 }
 
@@ -238,6 +269,11 @@ public class main_server {
                                         stmt1.setString(3, m.group_type);
                                         stmt1.executeUpdate();
                                     }
+                                }
+                                else
+                                {
+                                    Send t=new Send(mess,main_server.ip.get(mess.userid1));
+                                    t.start();
                                 }
                                 break;
                             }
@@ -282,8 +318,8 @@ public class main_server {
                                     t.start();
                                 } else {
                                     main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.userid1);
-                                    Send t=new Send(mess,x);
+                                    InetAddress x = getServer(m.userid1);
+                                    Send t = new Send(mess, x);
                                     t.start();
 
                                 }
@@ -292,64 +328,58 @@ public class main_server {
                             }
                             case 2: {
                                 main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.userid1);
-                                    Send t=new Send(mess,x);
-                                    t.start();
-                                
+                                InetAddress x = getServer(m.userid1);
+                                Send t = new Send(mess, x);
+                                t.start();
+
                                 break;
                             }
                             case 3: {
-                                main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.groupid);
-                                    Send t=new Send(mess,x);
-                                    t.start();
+                                InetAddress x = getServer(m.groupid);
+                                Send t = new Send(mess, x);
+                                t.start();
                                 break;
                             }
                             case 4: {
-                                main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.userid2);
-                                    Send t=new Send(mess,x);
-                                    t.start();
+                                InetAddress x = getServer(m.userid2);
+                                Send t = new Send(mess, x);
+                                t.start();
                                 break;
                             }
                             case 5: {
-                                main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.groupid);
-                                    Send t=new Send(mess,x);
-                                    t.start();
-                                
+                                InetAddress x = getServer(m.groupid);
+                                Send t = new Send(mess, x);
+                                t.start();
+
                                 break;
                             }
                             case 6: {
-                                main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.groupid);
-                                    Send t=new Send(mess,x);
-                                    t.start();
-                                
+                                InetAddress x = getServer(m.groupid);
+                                Send t = new Send(mess, x);
+                                t.start();
+
                                 break;
                             }
                             case 7: {
-                                stmt=db_connect.con.prepareStatement("select userid from group_data where groupid = ?");
-                                stmt.setString(1,m.groupid);
-                                rs=stmt.executeQuery();
-                                int i=1;
-                                String s="";
-                                while(rs.next())
-                                {
+                                stmt = db_connect.con.prepareStatement("select userid from group_data where groupid = ?");
+                                stmt.setString(1, m.groupid);
+                                rs = stmt.executeQuery();
+                                int i = 1;
+                                String s = "";
+                                while (rs.next()) {
                                     rs.absolute(i++);
-                                    s=s+","+rs.getString(1);
+                                    s = s + "," + rs.getString(1);
                                 }
-                                mess.message=s;
-                                Send t=new Send(mess,ipp);
+                                mess.message = s;
+                                Send t = new Send(mess, ipp);
                                 t.start();
                                 break;
                             }
                             case 8: {
-                                 main_server.tempip.put(m.userid1, ipp);
-                                    InetAddress x=getServer(m.groupid);
-                                    Send t=new Send(mess,x);
-                                    t.start();
-                                
+                                InetAddress x = getServer(m.groupid);
+                                Send t = new Send(mess, x);
+                                t.start();
+
                                 break;
                             }
                         }
