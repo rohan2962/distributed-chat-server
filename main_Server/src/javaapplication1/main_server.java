@@ -251,7 +251,9 @@ public class main_server {
                             }
                             case 4: {
                                 String stri = gson.toJson(mess);
+                                
                                 Send t = new Send(main_server.ip.get(mess.userid1),stri);
+                               // System.out.println("gfchvjbknlkjgchgjk"+main_server.ip.get(mess.userid1));
                                 t.start();
                                 break;
                             }
@@ -433,7 +435,7 @@ public class main_server {
                     DatagramSocket ds = new DatagramSocket();
                     String str=Thread.currentThread().getName();
                     
-                    //System.out.println(str);
+                   //System.out.println(ipaddr);
 
                     DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ipaddr, 3000);
                     ds.send(dp);
