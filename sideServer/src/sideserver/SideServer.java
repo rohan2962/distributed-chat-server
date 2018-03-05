@@ -107,6 +107,7 @@ class Read extends Thread {
                     //System.out.println(db_connect.message);
                     Send t = new Send(mess);
                     t.start();
+                    SideServer.dp = new DatagramPacket(SideServer.buf, 65520);
                     //System.out.println(db_connect.send);
                 }
             } catch (IOException ex) {
