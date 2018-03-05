@@ -149,6 +149,10 @@ public class Client {
                 System.out.println("Enter user id");
                 m.userid1 = s.next();
                 
+                  System.out.println("Group name");
+                m.groupid = s.next();
+                
+                
                 break;
             }
 
