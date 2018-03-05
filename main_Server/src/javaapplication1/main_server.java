@@ -72,7 +72,7 @@ public class main_server {
     main_server() {
         //ob=new message();
         map[0] = "172.26.44.218";
-        map[1] = "172.26.44.218";
+        map[1] = "172.26.45.17";
         map[2] = "172.26.46.244";
         Read t1 = new Read();
         t1.start();
@@ -184,13 +184,17 @@ public class main_server {
                                         mess.group_type = "Private";
                                         mess.userid2 = user;
                                         InetAddress ipAdd = getServer(mess.groupid);
-                                        Send t = new Send(mess, ipAdd, "chut");
+                                        
+
+                                            String stri = gson.toJson(mess);
+                                        Send t = new Send(ipAdd,stri);
                                         t.start();
 
                                     }
                                     System.out.println(i);
                                 } else {
-                                    Send t = new Send(mess, main_server.tempip.get(mess.userid1), "k1");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(main_server.tempip.get(mess.userid1),stri);
                                     t.start();
                                 }
                                 main_server.tempip.remove(mess.userid1);
@@ -222,7 +226,8 @@ public class main_server {
 
                                     }
                                     mess.message = s;
-                                    Send t = new Send(mess, main_server.ip.get(mess.userid1), "k2");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(main_server.ip.get(mess.userid1),stri);
                                     t.start();
 
                                 }
@@ -237,14 +242,16 @@ public class main_server {
                                 while (rs.next()) {
                                     rs.absolute(i++);
                                     String user = rs.getString(1);
-                                    Send t = new Send(mess, main_server.ip.get(user), "k3");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(main_server.ip.get(user),stri);
                                     t.start();
                                 }
 
                                 break;
                             }
                             case 4: {
-                                Send t = new Send(mess, main_server.ip.get(mess.userid1), "k4");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(main_server.ip.get(mess.userid1),stri);
                                 t.start();
                                 break;
                             }
@@ -265,7 +272,8 @@ public class main_server {
                                     }
                                 } else {
                                     if (m.group_type.equals("Public")) {
-                                        Send t = new Send(mess, main_server.ip.get(mess.userid1), "k5");
+                                        String stri = gson.toJson(mess);
+                                        Send t = new Send(main_server.ip.get(mess.userid1),stri);
                                         t.start();
                                     }
                                 }
@@ -287,7 +295,8 @@ public class main_server {
                                     while (rs.next()) {
                                         rs.absolute(i++);
                                         String user = rs.getString(1);
-                                        Send t = new Send(mess, main_server.ip.get(user), "k6");
+                                        String stri = gson.toJson(mess);
+                                        Send t = new Send(main_server.ip.get(user),stri);
                                         t.start();
                                     }
                                 }
@@ -296,7 +305,8 @@ public class main_server {
 
                             case 8: {
                                 if (m.ans) {
-                                    Send t = new Send(mess, main_server.ip.get(mess.userid1), "k7");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(main_server.ip.get(mess.userid1),stri);
                                     t.start();
                                 }
                                 break;
@@ -307,13 +317,16 @@ public class main_server {
                         switch (m.type) {
                             case 1: {
                                 if (main_server.tempip.containsKey(m.userid1)) {
+                                    
                                     mess.ans = false;
-                                    Send t = new Send(mess, ipp, "k8");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(ipp,stri);
                                     t.start();
                                 } else {
                                     main_server.tempip.put(m.userid1, ipp);
                                     InetAddress x = getServer(m.userid1);
-                                    Send t = new Send(mess, x, "bhosd");
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(x,stri);
                                     t.start();
 
                                 }
@@ -323,34 +336,40 @@ public class main_server {
                             case 2: {
                                 main_server.tempip.put(m.userid1, ipp);
                                 InetAddress x = getServer(m.userid1);
-                                Send t = new Send(mess, x, "plokijbnj");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(x,stri);
                                 t.start();
 
                                 break;
                             }
                             case 3: {
                                 InetAddress x = getServer(m.groupid);
-                                Send t = new Send(mess, x, "junhjbhb");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(x, stri);
                                 t.start();
                                 break;
                             }
                             case 4: {
+                                String stri = gson.toJson(mess);
+                                
                                 InetAddress x = getServer(m.userid2);
-                                Send t = new Send(mess, x, "bolmln");
+                                Send t = new Send(x,stri);
                                 t.start();
                                 break;
                             }
                             case 5: {
                                 mess.group_type = "Public";
                                 InetAddress x = getServer(m.groupid);
-                                Send t = new Send(mess, x, "kilplj");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(x,stri);
                                 t.start();
 
                                 break;
                             }
                             case 6: {
                                 InetAddress x = getServer(m.groupid);
-                                Send t = new Send(mess, x, "poilpoilpoil");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(x,stri);
                                 t.start();
 
                                 break;
@@ -366,13 +385,15 @@ public class main_server {
                                     s = s + "," + rs.getString(1);
                                 }
                                 mess.message = s;
-                                Send t = new Send(mess, ipp, m.groupid);
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(ipp,stri);
                                 t.start();
                                 break;
                             }
                             case 8: {
                                 InetAddress x = getServer(m.groupid);
-                                Send t = new Send(mess, x, "poiyradvjhhdthgcjhdhtsxgfc");
+                                String stri = gson.toJson(mess);
+                                Send t = new Send(x,stri);
                                 t.start();
 
                                 break;
@@ -396,24 +417,22 @@ public class main_server {
 
     public class Send extends Thread {
 
-        message m;
+        
         InetAddress ipaddr;
 
-        Send(message m, InetAddress ipaddr, String name) {
+        Send(InetAddress ipaddr, String name) {
             super(name);
             this.ipaddr = ipaddr;
-            this.m = m;
+            
 
         }
 
         public void run() {
-            synchronized (this) {
                 try {
 
                     DatagramSocket ds = new DatagramSocket();
-                    Gson gson = new Gson();
-
-                    String str = gson.toJson(m);
+                    String str=Thread.currentThread().getName();
+                    
                     //System.out.println(str);
 
                     DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ipaddr, 3000);
@@ -429,4 +448,3 @@ public class main_server {
         }
     }
 
-}
