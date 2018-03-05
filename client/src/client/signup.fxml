@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<JFXTabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.SignupController">
+   <tabs>
+      <Tab text="Sign Up">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <JFXTextField fx:id="username" labelFloat="true" layoutX="223.0" layoutY="45.0" promptText="UserName" />
+                  <JFXPasswordField fx:id="password" labelFloat="true" layoutX="224.0" layoutY="97.0" promptText="Password" />
+                  <JFXComboBox fx:id="gender" layoutX="224.0" layoutY="152.0" prefHeight="26.0" prefWidth="156.0" promptText="Gender" />
+                  <JFXTextField fx:id="pic_location" editable="false" labelFloat="true" layoutX="223.0" layoutY="214.0" promptText="Select Profile Pic" />
+                  <JFXButton fx:id="browse_pic" buttonType="RAISED" layoutX="400.0" layoutY="214.0" style="-fx-background-color: aaaaaa;" text="Browse" />
+                  <JFXButton fx:id="signup_submit" buttonType="RAISED" layoutX="252.0" layoutY="282.0" prefHeight="35.0" prefWidth="86.0" style="-fx-background-color: aaaaaa;" text="Submit" />
+                  <Label fx:id="signup_error" layoutX="218.0" layoutY="21.0" prefHeight="16.0" prefWidth="159.0" style="-fx-text-fill: ff0000;" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+      <Tab text="Login">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <JFXTextField fx:id="login_username" labelFloat="true" layoutX="223.0" layoutY="76.0" promptText="UserName" />
+                  <JFXPasswordField fx:id="login_password" labelFloat="true" layoutX="223.0" layoutY="194.0" promptText="Password" />
+                  <JFXButton fx:id="login_submit" buttonType="RAISED" layoutX="255.0" layoutY="266.0" prefHeight="36.0" prefWidth="77.0" style="-fx-background-color: aaaaaa;" text="Submit" />
+                  <Label fx:id="login_error" layoutX="221.0" layoutY="35.0" prefHeight="16.0" prefWidth="154.0" style="-fx-text-fill: ff0000;" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+   </tabs>
+</JFXTabPane>
