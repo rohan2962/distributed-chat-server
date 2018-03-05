@@ -218,9 +218,9 @@ class Send extends Thread {
                             }
                         }
                         messa = messa.substring(j);
-                        stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
-                        stmt.setString(1, m1.groupid);
-                        stmt.setString(2, messa);
+                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages = ? where groupid = ?");
+                        stmt.setString(2, m1.groupid);
+                        stmt.setString(1, messa);
                         stmt.executeUpdate();
                         m2.groupid = m1.groupid;
                         m2.message = messa;
@@ -244,6 +244,11 @@ class Send extends Thread {
                         m2.pic = rs.getString(3);
                         m2.from = 1;
                         m2.userid1 = m1.userid1;
+                        m2.ans=true;
+                    }
+                    else{
+                        m2.from = 1;
+                        m2.ans=false;
                     }
 
                     break;
@@ -261,9 +266,9 @@ class Send extends Thread {
                         String messa = m1.userid1 + " has created the group " + m1.groupid + ".\n";
 
                         m2.message = messa;
-                        stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
-                        stmt.setString(1, m1.groupid);
-                        stmt.setString(2, messa);
+                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages=? where goupid = ?");
+                        stmt.setString(2, m1.groupid);
+                        stmt.setString(1, messa);
                         stmt.executeUpdate();
                         m2.groupid = m1.groupid;
                     }
@@ -287,7 +292,7 @@ class Send extends Thread {
                             }
                         }
                         messa = messa.substring(j);
-                        stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
+                        stmt = SideServer.c.con.prepareStatement("insert into group_conv set messages = ? where groupid = ?");
                         stmt.setString(1, m1.groupid);
                         stmt.setString(2, messa);
                         stmt.executeUpdate();
@@ -326,7 +331,7 @@ class Send extends Thread {
 
             }
             mm = gson.toJson(m2);
-            //System.out.println(mm);
+            System.out.println(mm);
             DatagramPacket dp = new DatagramPacket(mm.getBytes(), mm.length(), SideServer.ip, 5000);
             SideServer.ds1.send(dp);
         } catch (IOException ex) {
