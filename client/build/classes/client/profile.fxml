@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="75.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.ProfileController">
+   <children>
+      <ImageView fx:id="profile_pic" fitHeight="75.0" fitWidth="75.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="username" layoutX="90.0" layoutY="14.0" prefHeight="16.0" prefWidth="100.0"  />
+      <Label fx:id="gender" layoutX="122.0" layoutY="38.0" prefHeight="16.0" prefWidth="75.0" />
+   </children>
+</AnchorPane>

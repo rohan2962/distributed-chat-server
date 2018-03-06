@@ -5,6 +5,7 @@
  */
 package client;
 
+import com.google.gson.Gson;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXPasswordField;
@@ -83,28 +84,54 @@ public class SignupController implements Initializable {
         signup_submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                signup_error.setText("");
-                Client.userid = username.getText();
-                Client.password = password.getText();
-                if(username.getText().equals("")){
-                    signup_error.setText("Enter username");
-                }
-                else if(password.getText().equals("")){
-                    signup_error.setText("Enter password");
-                }
-                else if(gender.getValue()==null){
-                    signup_error.setText("Enter gender");
-                }
-                else{
-                    if (gender.getValue().getText().equals("Male")) {
-                    Client.gender = 1;
+                try {
+                    signup_error.setText("");
+                    Client.userid = username.getText();
+                    Client.password = password.getText();
+                    if (username.getText().equals("")) {
+                        signup_error.setText("Enter username");
+                    } else if (password.getText().equals("")) {
+                        signup_error.setText("Enter password");
+                    } else if (gender.getValue() == null) {
+                        signup_error.setText("Enter gender");
+                    } else {
+                        if (gender.getValue().getText().equals("Male")) {
+                            Client.gender = 1;
 
-                } else {
-                    Client.gender = 0;
+                        } else {
+                            Client.gender = 0;
+                        }
+                        System.out.println("signup");
+                    }
+                    message m = new message();
+                    m.from = 0;
+                    m.type = 1;
+                    m.userid1 = Client.userid;
+                    m.pwd = Client.password;
+                    m.pic = Client.pic;
+                    m.gender = Client.gender;
+                    Gson gson = new Gson();
+                    String mess = gson.toJson(m);
+                    Send t1 = new Send(mess);
+                    t1.start();
+                    while (!Client.message_received) {
+                        Thread.sleep(10);
+                    }
+                    message m1 = (message) Client.recv_m.clone();
+                    if (m1.ans) {
+
+                        signup_error.setText("Successful signup. Please Login.");
+
+                    } else {
+                        signup_error.setText("Username is already taken. Choose a new name.");
+                    }
+                    Client.recv_m = null;
+                    Client.message_received = false;
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    System.out.println("signup");
-                }
-                ///////send this data 
             }
 
         });
@@ -123,7 +150,7 @@ public class SignupController implements Initializable {
                     baos.flush();
                     byte[] imageInByte = baos.toByteArray();
                     baos.close();
-                    
+
                     Client.pic = new String(Base64.getEncoder().encode(imageInByte), "UTF-8");
                     //System.out.println(Client.pic);
                 } catch (Exception ex) {
@@ -132,24 +159,55 @@ public class SignupController implements Initializable {
             }
 
         });
-        login_submit.setOnMouseClicked(new EventHandler<MouseEvent>(){
+        login_submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 login_error.setText("");
-                Client.userid=login_username.getText();
-                Client.password=login_password.getText();
+                Client.userid = login_username.getText();
+                Client.password = login_password.getText();
                 ///send this data
-                if(login_username.getText().equals("")){
+                if (login_username.getText().equals("")) {
                     login_error.setText("Enter username");
-                }
-                else if(login_password.getText().equals("")){
+                } else if (login_password.getText().equals("")) {
                     login_error.setText("Enter password");
-                }
-                else{
-                    System.out.println("login");
+                } else {
+                    try {
+                        System.out.println("login");
+                        message m = new message();
+                        m.from = 0;
+                        m.type = 2;
+                        m.userid1 = Client.userid;
+                        m.pwd = Client.password;
+
+                        Gson gson = new Gson();
+                        String mess = gson.toJson(m);
+                        Send t1 = new Send(mess);
+                        t1.start();
+                        while (!Client.message_received) {
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        message m1 = (message) Client.recv_m.clone();
+                        if (m1.ans) {
+
+                            login_error.setText("Successful Login.");
+                            Client.recv_m = null;
+                            Client.message_received = false;
+                        } else {
+                            login_error.setText("Wrong username or password");
+                            Client.recv_m = null;
+                            Client.message_received = false;
+                        }
+
+                    } catch (CloneNotSupportedException ex) {
+                        Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
-            
+
         });
     }
 

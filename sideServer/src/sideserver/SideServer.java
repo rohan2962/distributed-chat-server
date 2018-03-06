@@ -82,13 +82,15 @@ class message implements Cloneable {
     String pic;
     int gender;
     boolean ans;
+    int port;
 
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 
     message() {
-
+        this.from=1;
+        
     }
 
 }
@@ -266,7 +268,7 @@ class Send extends Thread {
                         String messa = m1.userid1 + " has created the group " + m1.groupid + ".\n";
 
                         m2.message = messa;
-                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages=? where goupid = ?");
+                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages=? where groupid = ?");
                         stmt.setString(2, m1.groupid);
                         stmt.setString(1, messa);
                         stmt.executeUpdate();
