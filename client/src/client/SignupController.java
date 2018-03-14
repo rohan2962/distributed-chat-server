@@ -20,13 +20,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
@@ -81,6 +86,7 @@ public class SignupController implements Initializable {
         gender.getItems().add(new Label("Female"));
         signup_error.setText("");
         login_error.setText("");
+        username.setText("");
         signup_submit.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -102,31 +108,32 @@ public class SignupController implements Initializable {
                             Client.gender = 0;
                         }
                         System.out.println("signup");
-                    }
-                    message m = new message();
-                    m.from = 0;
-                    m.type = 1;
-                    m.userid1 = Client.userid;
-                    m.pwd = Client.password;
-                    m.pic = Client.pic;
-                    m.gender = Client.gender;
-                    Gson gson = new Gson();
-                    String mess = gson.toJson(m);
-                    Send t1 = new Send(mess);
-                    t1.start();
-                    while (!Client.message_received) {
-                        Thread.sleep(10);
-                    }
-                    message m1 = (message) Client.recv_m.clone();
-                    if (m1.ans) {
 
-                        signup_error.setText("Successful signup. Please Login.");
+                        message m = new message();
+                        m.from = 0;
+                        m.type = 1;
+                        m.userid1 = Client.userid;
+                        m.pwd = Client.password;
+                        m.pic = Client.pic;
+                        m.gender = Client.gender;
+                        Gson gson = new Gson();
+                        String mess = gson.toJson(m);
+                        Send t1 = new Send(mess);
+                        t1.start();
+                        while (!Client.message_received) {
+                            Thread.sleep(10);
+                        }
+                        message m1 = (message) Client.recv_m.clone();
+                        if (m1.ans) {
 
-                    } else {
-                        signup_error.setText("Username is already taken. Choose a new name.");
+                            signup_error.setText("Successful signup. Please Login.");
+
+                        } else {
+                            signup_error.setText("Username is already taken. Choose a new name.");
+                        }
+                        Client.recv_m = null;
+                        Client.message_received = false;
                     }
-                    Client.recv_m = null;
-                    Client.message_received = false;
                 } catch (CloneNotSupportedException ex) {
                     Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InterruptedException ex) {
@@ -194,6 +201,20 @@ public class SignupController implements Initializable {
                         if (m1.ans) {
 
                             login_error.setText("Successful Login.");
+                            Client.gender=m1.gender;
+                            Client.pic=m1.pic;
+                            Client.userid=m1.userid1;
+                            StringTokenizer st = new StringTokenizer(m1.message.substring(1), ",");
+                            while(st.hasMoreTokens()){
+                                Client.grouplist.add(st.nextToken());
+                            }
+                            Parent x= login_error.getParent();
+                            while(x.getClass()!=BorderPane.class){
+                                x=x.getParent();
+                            }
+                            BorderPane bp = (BorderPane)x;
+                            Node root=FXMLLoader.load(getClass().getResource("mainview.fxml"));
+                            bp.setCenter(root);
                             Client.recv_m = null;
                             Client.message_received = false;
                         } else {
@@ -203,6 +224,8 @@ public class SignupController implements Initializable {
                         }
 
                     } catch (CloneNotSupportedException ex) {
+                        Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
                         Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

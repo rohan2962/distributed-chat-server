@@ -29,8 +29,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 
 /**
@@ -56,11 +58,11 @@ public class Client extends Application {
         
         
         //root.getChildren().add(btn);
-        grouplist.add("group1");
+        /*grouplist.add("group1");
         grouplist.add("group2");
         grouplist.add("group3");
         slot_user="rohan";
-        slot_gender=1;
+        slot_gender=1;*/
         File file = new File("/home/rohan/Desktop/Earth.jpg");
 
             BufferedImage originalImage = ImageIO.read(file);
@@ -74,12 +76,19 @@ public class Client extends Application {
 
             pic = new String(Base64.getEncoder().encode(imageInByte), "UTF-8");
         Parent root=FXMLLoader.load(getClass().getResource("signup.fxml"));
-        Scene scene = new Scene(root, 600, 400);
+        BorderPane bp = new BorderPane(root);
+        Scene scene = new Scene(bp, 600, 400);
         Read t1=new Read();
         t1.start();
         primaryStage.setTitle("Chat Server");
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                System.exit(0);
+            }
+        });
     }
 
     /**

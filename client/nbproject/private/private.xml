@@ -4,9 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/rohan/NetBeansProjects/client/src/client/signup.fxml</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/mainview.fxml</file>
             <file>file:/home/rohan/NetBeansProjects/client/src/client/SignupController.java</file>
-            <file>file:/home/rohan/NetBeansProjects/client/src/client/group.fxml</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/GroupController.java</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/MainviewController.java</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/ProfileController.java</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/Send.java</file>
             <file>file:/home/rohan/NetBeansProjects/client/src/client/Client.java</file>
+            <file>file:/home/rohan/NetBeansProjects/client/src/client/profile.fxml</file>
         </group>
     </open-files>
 </project-private>

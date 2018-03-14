@@ -74,11 +74,11 @@ public class MainviewController implements Initializable {
             ImageIO.write(image, "jpg", outputfile);
             im = new Image(outputfile.toURI().toString());
             profile_pic.setImage(im);
-            username.setText(Client.slot_user);
+            username.setText(Client.userid);
             System.out.println(username.getText());
             username.setVisible(true);
             gender.setVisible(true);
-            if (Client.slot_gender == 1) {
+            if (Client.gender == 1) {
                 gender.setText("Male");
             } else {
                 gender.setText("Female");
