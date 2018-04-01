@@ -298,7 +298,7 @@ class Send extends Thread {
                         stmt.setString(2, m1.groupid);
                         stmt.setString(1, messa);
                         stmt.executeUpdate();
-                        m2.message = messa;
+                        m2.message = messa1;
                         m2.from = 1;
                         m2.ans = true;
                     } else {

@@ -115,7 +115,7 @@ public class GroupController implements Initializable {
         send.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (new_message.getText().length() != 0) {
+                if (groupinfo.getText().equals("Group Info")&&new_message.getText().length() != 0) {
                     message me = new message();
                     me.from = 0;
                     me.type = 3;
@@ -143,10 +143,28 @@ public class GroupController implements Initializable {
                     message m = new message();
                     m.from = 0;
                     m.type = 6;
-                    m.groupid = groupname.getText();
+                    m.group_type = "Public";
+                    if (Client.mp.containsKey(groupname.getText())) {
+                        m.groupid = Client.mp.get(groupname.getText());
+                    } else {
+                        m.groupid = groupname.getText();
+                    }
                     m.userid1 = Client.userid;
                     Gson gson = new Gson();
                     Send s = new Send(gson.toJson(m));
+                    s.start();
+                    m = new message();
+                    m.from = 0;
+                    m.type = 7;
+                    m.group_type = "Public";
+                    if (Client.mp.containsKey(groupname.getText())) {
+                        m.groupid = Client.mp.get(groupname.getText());
+                    } else {
+                        m.groupid = groupname.getText();
+                    }
+                    m.userid1 = Client.userid;
+                    gson = new Gson();
+                    s = new Send(gson.toJson(m));
                     s.start();
                     groupinfo.setText("Group Info");
                 } else {
@@ -228,7 +246,7 @@ public class GroupController implements Initializable {
             }
             acc.getPanes().clear();
             acc.getPanes().addAll(tp);
-            
+
             sidepane.setContent(acc);
         }
     }

@@ -69,6 +69,7 @@ public class CreategroupController implements Initializable {
                     }
                     else{
                         Client.grouplist.add(groupname.getText());
+                        Client.group_info.put(groupname.getText(),","+ Client.userid);
                          Stage st=(Stage) grouperror.getScene().getWindow();
                         st.close();
                     }

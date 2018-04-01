@@ -193,12 +193,12 @@ class Read extends Thread {
                 Client.group_mess.put(s, mess);
                 String s1=Client.recv_m.userid1;
                 if (Client.group_info.containsKey(s)) {
-                    mess = Client.group_mess.get(s)+",";
+                    mess = Client.group_info.get(s)+",";
                 } else {
                     mess = "";
                 }
                 mess += s1;
-                Client.group_mess.put(s, mess);
+                Client.group_info.put(s, mess);
                 Client.message_received = false;
 
             }
