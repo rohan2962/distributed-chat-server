@@ -226,7 +226,7 @@ public class main_server {
                                     main_server.port_user.put(m.userid1, main_server.temp_port_user.get(m.userid1));
                                     main_server.tempip.remove(mess.userid1);
                                     main_server.temp_port_user.remove(mess.userid1);
-                                    stmt = db_connect.con.prepareStatement("select groupid from group_data where type=?");
+                                    stmt = db_connect.con.prepareStatement("select distinct groupid from group_data where type=?");
                                     stmt.setString(1, "Public");
                                     rs = stmt.executeQuery();
                                     int i = 1;
