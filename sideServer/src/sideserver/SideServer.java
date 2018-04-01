@@ -38,8 +38,8 @@ public class SideServer {
     public static void main(String[] args) throws ClassNotFoundException, SQLException, SocketException, UnknownHostException, FileNotFoundException {
         // TODO code application logic here
         ds = new DatagramSocket(3000);
-        ds1 = new DatagramSocket(5000);
-        ip = InetAddress.getByName("172.26.46.244");
+        ds1 = new DatagramSocket();
+        ip = InetAddress.getByName("169.254.203.76");
         c = new connect();
         PreparedStatement stmt;
         stmt = c.con.prepareStatement("select * from user_details");
@@ -268,9 +268,9 @@ class Send extends Thread {
                         String messa = m1.userid1 + " has created the group " + m1.groupid + ".\n";
 
                         m2.message = messa;
-                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages=? where groupid = ?");
-                        stmt.setString(2, m1.groupid);
-                        stmt.setString(1, messa);
+                        stmt = SideServer.c.con.prepareStatement("insert into group_conv values(?,?)");
+                        stmt.setString(1, m1.groupid);
+                        stmt.setString(2, messa);
                         stmt.executeUpdate();
                         m2.groupid = m1.groupid;
                     }
@@ -294,9 +294,9 @@ class Send extends Thread {
                             }
                         }
                         messa = messa.substring(j);
-                        stmt = SideServer.c.con.prepareStatement("insert into group_conv set messages = ? where groupid = ?");
-                        stmt.setString(1, m1.groupid);
-                        stmt.setString(2, messa);
+                        stmt = SideServer.c.con.prepareStatement("update group_conv set messages = ? where groupid = ?");
+                        stmt.setString(2, m1.groupid);
+                        stmt.setString(1, messa);
                         stmt.executeUpdate();
                         m2.message = messa;
                         m2.from = 1;
