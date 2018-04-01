@@ -10,7 +10,9 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawer.DrawerDirection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
@@ -49,7 +51,8 @@ public class GroupController implements Initializable {
     private TextArea messages;
     @FXML
     private TextField new_message;
-
+    public ScrollPane sidepane;
+    public Accordion acc;
     private JFXDrawer drawer = new JFXDrawer();
 
     /**
@@ -117,7 +120,7 @@ public class GroupController implements Initializable {
                     me.from = 0;
                     me.type = 3;
                     me.userid1 = Client.userid;
-                    me.message = Client.userid+": "+new_message.getText() + "\n";
+                    me.message = Client.userid + ": " + new_message.getText() + "\n";
                     if (Client.mp.containsKey(groupname.getText())) {
                         me.groupid = Client.mp.get(groupname.getText());
                     } else {
@@ -147,24 +150,50 @@ public class GroupController implements Initializable {
                     s.start();
                     groupinfo.setText("Group Info");
                 } else {
-                    ScrollPane sidepane = new ScrollPane();
-                    sidepane.setPrefSize(100, 400);
-                    Accordion acc = new Accordion();
-                    acc.setPrefSize(90, 390);
-                    TitledPane tp = new TitledPane();
-                    tp.setText("hi");
-                    acc.getPanes().add(tp);
-                    sidepane.setContent(acc);
-                    //drawer.getChildren().add(acc);
-                    drawer.setSidePane(sidepane);
-                    //drawer.setAlignment(Pos.TOP_RIGHT);
-                    drawer.setPrefSize(100, 400);
+                    if (Client.group_info.containsKey(groupname.getText())) {
 
-                    borderpane.setRight(drawer);
-                    if (drawer.isShown()) {
-                        drawer.close();
+                        sidepane = new ScrollPane();
+                        sidepane.setPrefSize(100, 400);
+                        acc = new Accordion();
+                        acc.setPrefSize(90, 390);
+                        ScheduledService<Void> u = new ScheduledService<Void>() {
+                            protected Task<Void> createTask() {
+                                return new Task<Void>() {
+                                    protected Void call() {
+                                        Platform.runLater(() -> {
+                                            updateinfo();
+                                        });
+
+                                        return null;
+
+                                    }
+                                };
+
+                            }
+                        };
+
+                        u.setPeriod(Duration.millis(2000));
+                        u.start();
+                        //drawer.getChildren().add(acc);
+                        drawer.setSidePane(sidepane);
+                        //drawer.setAlignment(Pos.TOP_RIGHT);
+                        drawer.setPrefSize(100, 400);
+
+                        borderpane.setRight(drawer);
+                        if (drawer.isShown()) {
+                            drawer.close();
+                        } else {
+                            drawer.open();
+                        }
                     } else {
-                        drawer.open();
+                        message m = new message();
+                        m.from = 0;
+                        m.type = 7;
+                        m.groupid = groupname.getText();
+                        m.userid1 = Client.userid;
+                        Gson gson = new Gson();
+                        Send s = new Send(gson.toJson(m));
+                        s.start();
                     }
                     //drawer.open();
                 }
@@ -179,6 +208,28 @@ public class GroupController implements Initializable {
         if (Client.group_mess.containsKey(groupname.getText()) && !messages.getText().equals(Client.group_mess.containsKey(groupname.getText()))) {
 
             messages.setText(Client.group_mess.get(groupname.getText()));
+        }
+
+    }
+
+    void updateinfo() {
+        String grp = groupname.getText();
+        if (Client.group_info.containsKey(grp)) {
+
+            StringTokenizer st = new StringTokenizer(Client.group_info.get(grp).substring(1), ",");
+            ArrayList<String> arr = new ArrayList();
+            while (st.hasMoreTokens()) {
+                arr.add(st.nextToken());
+            }
+            TitledPane[] tp = new TitledPane[arr.size()];
+            for (int i = 0; i < arr.size(); i++) {
+                tp[i] = new TitledPane();
+                tp[i].setText(arr.get(i));
+            }
+            acc.getPanes().clear();
+            acc.getPanes().addAll(tp);
+            
+            sidepane.setContent(acc);
         }
     }
 

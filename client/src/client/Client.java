@@ -53,6 +53,7 @@ public class Client extends Application {
     public static volatile HashMap<String, String> mp = new HashMap<>();
     public static volatile HashMap<String, String> revmp = new HashMap<>();
     public static volatile HashMap<String, String> group_mess = new HashMap<>();
+    public static volatile HashMap<String, String> group_info = new HashMap<>();
     public static ObservableList<String> groups = FXCollections.observableArrayList();
     public static DatagramSocket ds, ds1;
     public static InetAddress ip;
@@ -177,6 +178,38 @@ class Read extends Thread {
                 }
                 mess += Client.recv_m.message;
                 Client.group_mess.put(s, mess);
+                Client.message_received = false;
+
+            } else if (Client.message_received == true && Client.recv_m.type == 6 ) {
+                String s = Client.recv_m.groupid;
+                
+                String mess;
+                if (Client.group_mess.containsKey(s)) {
+                    mess = Client.group_mess.get(s);
+                } else {
+                    mess = "";
+                }
+                mess += Client.recv_m.message;
+                Client.group_mess.put(s, mess);
+                String s1=Client.recv_m.userid1;
+                if (Client.group_info.containsKey(s)) {
+                    mess = Client.group_mess.get(s)+",";
+                } else {
+                    mess = "";
+                }
+                mess += s1;
+                Client.group_mess.put(s, mess);
+                Client.message_received = false;
+
+            }
+            else if (Client.message_received == true && Client.recv_m.type == 7 ) {
+                String s = Client.recv_m.groupid;
+                
+                if(Client.revmp.containsKey(s)){
+                    s=Client.revmp.get(s);
+                }
+                Client.group_info.put(s, Client.recv_m.message);
+                Client.message_received = false;
 
             }
         } catch (Exception ex) {
