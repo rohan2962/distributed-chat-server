@@ -42,15 +42,14 @@ import sun.misc.BASE64Decoder;
 public class main_server {
 
     public static volatile HashMap<String, InetAddress> ip = new HashMap<String, InetAddress>();
-        public static volatile HashMap<String,Integer> port_user = new HashMap<String, Integer>();
+    public static volatile HashMap<String, Integer> port_user = new HashMap<String, Integer>();
 
     public static volatile HashMap<String, InetAddress> tempip = new HashMap<String, InetAddress>();
-            public static volatile HashMap<String,Integer> temp_port_user = new HashMap<String, Integer>();
+    public static volatile HashMap<String, Integer> temp_port_user = new HashMap<String, Integer>();
 
-    
-
+    public static int size_map;
     Scanner scan = new Scanner(System.in);
-    public static String map[] = new String[15];
+    public static String map[];
 
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
@@ -69,16 +68,22 @@ public class main_server {
         for (int j = 0; j < s.length(); j++) {
             hash = hash + num * s.charAt(j);
         }
-        hash = hash % 2;
+        hash = hash % main_server.size_map;
         InetAddress ippp = InetAddress.getByName(map[hash]);
         return ippp;
     }
 
-    main_server() {
+    main_server(String a[]) {
+        main_server.map = new String[a.length];
+        for (int ind = 0; ind < a.length; ind++) {
+            main_server.map[ind] = a[ind];
+        }
+        main_server.size_map = a.length;
+        System.out.println(a.length);
         //ob=new message();
-        map[0] = "172.26.44.218";
-        map[1] = "172.26.45.17";
-        map[2] = "172.26.46.244";
+        /* map[0] = "172.26.46.54";
+        map[1] = "172.26.46.54";
+        map[2] = "172.26.46.244";*/
         Read t1 = new Read();
         t1.start();
         //System.out.println("ff");
@@ -112,7 +117,7 @@ public class main_server {
             this.ans = false;
             this.pwd = "new";
             this.group_type = "Public";
-            File file = new File("/home/vips/Desktop/zebra.jpg");
+            File file = new File("/home/vips/Desktop/Earth.jpg");
 
             BufferedImage originalImage = ImageIO.read(file);
             FileInputStream fileInputStreamReader = new FileInputStream(file);
@@ -163,9 +168,10 @@ public class main_server {
                     ResultSet rs, rs1;
 
                     if (m.from == 1) {
-                        
+
                         //System.out.println(m.type);
                         switch (m.type) {
+
                             case 1: {
                                 if (m.ans) {
                                     stmt = db_connect.con.prepareStatement("select distinct(userid) from group_data");
@@ -191,21 +197,21 @@ public class main_server {
                                         mess.group_type = "Private";
                                         mess.userid2 = user;
                                         InetAddress ipAdd = getServer(mess.groupid);
-                                        
 
                                         String stri = gson.toJson(mess);
-                                        Send t = new Send(ipAdd,stri,3000);
+                                        Send t = new Send(ipAdd, stri, 3000);
                                         t.start();
 
                                     }
-                                    mess.ans=true;
+                                    mess.ans = true;
+                                    mess.type=1;
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.tempip.get(mess.userid1),stri,main_server.temp_port_user.get(mess.userid1));
+                                    Send t = new Send(main_server.tempip.get(mess.userid1), stri, main_server.temp_port_user.get(mess.userid1));
                                     t.start();
                                     System.out.println(i);
                                 } else {
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.tempip.get(mess.userid1),stri,main_server.temp_port_user.get(mess.userid1));
+                                    Send t = new Send(main_server.tempip.get(mess.userid1), stri, main_server.temp_port_user.get(mess.userid1));
                                     t.start();
                                 }
                                 main_server.tempip.remove(mess.userid1);
@@ -215,9 +221,9 @@ public class main_server {
                             }
                             case 2: {
                                 if (m.ans) {
-                                    
+
                                     main_server.ip.put(m.userid1, main_server.tempip.get(m.userid1));
-                                    main_server.port_user.put(m.userid1,main_server.temp_port_user.get(m.userid1));
+                                    main_server.port_user.put(m.userid1, main_server.temp_port_user.get(m.userid1));
                                     main_server.tempip.remove(mess.userid1);
                                     main_server.temp_port_user.remove(mess.userid1);
                                     stmt = db_connect.con.prepareStatement("select groupid from group_data where type=?");
@@ -240,18 +246,28 @@ public class main_server {
                                         s = s + "," + rs.getString(1);
 
                                     }
-                                    mess.ans=true;
+                                    stmt = db_connect.con.prepareStatement("select groupid from group_data where userid=?");
+                                    stmt.setString(1, m.userid1);
+                                    String x = "";
+                                    rs = stmt.executeQuery();
+                                    i = 1;
+                                    while (rs.next()) {
+                                        rs.absolute(i++);
+                                        x = x + "," + rs.getString(1);
+
+                                    }
+                                    mess.groupid = x;
+                                    System.out.println(mess.groupid);
+                                    mess.ans = true;
                                     mess.message = s;
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
+                                    Send t = new Send(main_server.ip.get(mess.userid1), stri, main_server.port_user.get(mess.userid1));
                                     t.start();
 
-                                }
-                                else
-                                {
-                                    mess.ans=false;
+                                } else {
+                                    mess.ans = false;
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
+                                    Send t = new Send(main_server.ip.get(mess.userid1), stri, main_server.port_user.get(mess.userid1));
                                     t.start();
                                 }
 
@@ -263,20 +279,24 @@ public class main_server {
                                 rs = stmt.executeQuery();
                                 int i = 1;
                                 while (rs.next()) {
+                                    
                                     rs.absolute(i++);
                                     String user = rs.getString(1);
+                                    System.out.println("Type 3 sending "+rs.getString(1)+" "+mess.message);
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
+                                    if(main_server.ip.containsKey(user)){
+                                    Send t = new Send(main_server.ip.get(user), stri, main_server.port_user.get(user));
                                     t.start();
+                                    }
                                 }
 
                                 break;
                             }
                             case 4: {
                                 String stri = gson.toJson(mess);
-                                
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
-                               // System.out.println("gfchvjbknlkjgchgjk"+main_server.ip.get(mess.userid1));
+
+                                Send t = new Send(main_server.ip.get(mess.userid1), stri, main_server.port_user.get(mess.userid1));
+                                // System.out.println("gfchvjbknlkjgchgjk"+main_server.ip.get(mess.userid1));
                                 t.start();
                                 break;
                             }
@@ -294,11 +314,29 @@ public class main_server {
                                         stmt1.setString(2, m.groupid);
                                         stmt1.setString(3, m.group_type);
                                         stmt1.executeUpdate();
+                                        String stri = gson.toJson(mess);
+                                        if (main_server.ip.containsKey(m.userid2)) {
+                                            Send t = new Send(main_server.ip.get(m.userid2), stri, main_server.port_user.get(m.userid2));
+                                            t.start();
+                                            System.out.println("sending " + m.userid2 + " " + m.groupid);
+
+                                        }
+
+                                    } else {
+                                        m.type = 5;
+                                        m.message = m.groupid;
+                                        String stri = gson.toJson(mess);
+                                        for (String keys : main_server.ip.keySet()) {
+
+                                            Send t = new Send(main_server.ip.get(keys), stri, main_server.port_user.get(keys));
+                                            t.start();
+                                        }
                                     }
+
                                 } else {
                                     if (m.group_type.equals("Public")) {
                                         String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
+                                        Send t = new Send(main_server.ip.get(mess.userid1), stri, main_server.port_user.get(mess.userid1));
                                         t.start();
                                     }
                                 }
@@ -306,12 +344,6 @@ public class main_server {
                             }
                             case 6: {
                                 if (m.ans) {
-
-                                    stmt1 = db_connect.con.prepareStatement("insert into group_data values (?,?,?)");
-                                    stmt1.setString(1, m.userid1);
-                                    stmt1.setString(2, m.groupid);
-                                    stmt1.setString(3, m.group_type);
-                                    stmt1.executeUpdate();
 
                                     stmt = db_connect.con.prepareStatement("select  userid from group_data where groupid=?");
                                     stmt.setString(1, m.groupid);
@@ -321,17 +353,29 @@ public class main_server {
                                         rs.absolute(i++);
                                         String user = rs.getString(1);
                                         String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(user),stri,main_server.port_user.get(user));
+                                        Send t = new Send(main_server.ip.get(user), stri, main_server.port_user.get(user));
                                         t.start();
                                     }
+                                    stmt1 = db_connect.con.prepareStatement("insert into group_data values (?,?,?)");
+                                    stmt1.setString(1, m.userid1);
+                                    stmt1.setString(2, m.groupid);
+                                    stmt1.setString(3, m.group_type);
+                                    stmt1.executeUpdate();
+                                    mess.type = 8;
+                                    InetAddress x = getServer(m.groupid);
+                                    String stri = gson.toJson(mess);
+                                    Send t = new Send(x, stri, 3000);
+                                    t.start();
+
                                 }
                                 break;
                             }
 
                             case 8: {
                                 if (m.ans) {
+                                    System.out.println("type 8 : " + m.message);
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(main_server.ip.get(mess.userid1),stri,main_server.port_user.get(mess.userid1));
+                                    Send t = new Send(main_server.ip.get(mess.userid1), stri, main_server.port_user.get(mess.userid1));
                                     t.start();
                                 }
                                 break;
@@ -342,17 +386,17 @@ public class main_server {
                         switch (m.type) {
                             case 1: {
                                 if (main_server.tempip.containsKey(m.userid1)) {
-                                    
+
                                     mess.ans = false;
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(ipp,stri,mess.port);
+                                    Send t = new Send(ipp, stri, mess.port);
                                     t.start();
                                 } else {
                                     main_server.tempip.put(m.userid1, ipp);
                                     main_server.temp_port_user.put(m.userid1, m.port);
                                     InetAddress x = getServer(m.userid1);
                                     String stri = gson.toJson(mess);
-                                    Send t = new Send(x,stri,3000);
+                                    Send t = new Send(x, stri, 3000);
                                     t.start();
 
                                 }
@@ -361,26 +405,27 @@ public class main_server {
                             }
                             case 2: {
                                 main_server.tempip.put(m.userid1, ipp);
-                                main_server.temp_port_user.put(m.userid1,m.port);
+                                main_server.temp_port_user.put(m.userid1, m.port);
                                 InetAddress x = getServer(m.userid1);
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(x,stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
 
                                 break;
                             }
                             case 3: {
+                                System.out.println("Type 3 recv");
                                 InetAddress x = getServer(m.groupid);
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(x, stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
                                 break;
                             }
                             case 4: {
                                 String stri = gson.toJson(mess);
-                                
+
                                 InetAddress x = getServer(m.userid2);
-                                Send t = new Send(x,stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
                                 break;
                             }
@@ -388,7 +433,7 @@ public class main_server {
                                 mess.group_type = "Public";
                                 InetAddress x = getServer(m.groupid);
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(x,stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
 
                                 break;
@@ -396,12 +441,13 @@ public class main_server {
                             case 6: {
                                 InetAddress x = getServer(m.groupid);
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(x,stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
 
                                 break;
                             }
                             case 7: {
+                                
                                 stmt = db_connect.con.prepareStatement("select userid from group_data where groupid = ?");
                                 stmt.setString(1, m.groupid);
                                 rs = stmt.executeQuery();
@@ -411,16 +457,18 @@ public class main_server {
                                     rs.absolute(i++);
                                     s = s + "," + rs.getString(1);
                                 }
+                                System.out.println("Sending group info to "+m.userid1+" "+s);
                                 mess.message = s;
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(ipp,stri,mess.port);
+                                Send t = new Send(ipp, stri, mess.port);
                                 t.start();
                                 break;
                             }
                             case 8: {
+                                System.out.println("Type 8 ");
                                 InetAddress x = getServer(m.groupid);
                                 String stri = gson.toJson(mess);
-                                Send t = new Send(x,stri,3000);
+                                Send t = new Send(x, stri, 3000);
                                 t.start();
 
                                 break;
@@ -444,36 +492,33 @@ public class main_server {
 
     public class Send extends Thread {
 
-        
         InetAddress ipaddr;
         int port;
 
-        Send(InetAddress ipaddr, String name,int p) {
+        Send(InetAddress ipaddr, String name, int p) {
             super(name);
             this.ipaddr = ipaddr;
-            this.port=p;
-            
+            this.port = p;
 
         }
 
         public void run() {
-                try {
+            try {
 
-                    DatagramSocket ds = new DatagramSocket();
-                    String str=Thread.currentThread().getName();
-                    
-                   System.out.println(ipaddr+" "+port+" "+str.substring(0, 15));
+                DatagramSocket ds = new DatagramSocket();
+                String str = Thread.currentThread().getName();
 
-                    DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ipaddr, port);
-                    ds.send(dp);
-                    ds.close();
+                System.out.println(ipaddr + " " + port + " " + str.substring(0, 15));
 
-                } catch (SocketException ex) {
-                    Logger.getLogger(main_server.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(main_server.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                DatagramPacket dp = new DatagramPacket(str.getBytes(), str.length(), ipaddr, port);
+                ds.send(dp);
+                ds.close();
+
+            } catch (SocketException ex) {
+                Logger.getLogger(main_server.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(main_server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-
+}
