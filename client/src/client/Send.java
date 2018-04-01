@@ -28,7 +28,7 @@ public class Send extends Thread{
         String mm=Thread.currentThread().getName();
         try{
         Client.ds1=new DatagramSocket();
-        Client.ip = InetAddress.getByName("169.254.203.76");
+        Client.ip = InetAddress.getByName("172.26.45.219");
         DatagramPacket dp= new DatagramPacket(mm.getBytes(), mm.length(), Client.ip, 5000);
         Client.ds1.send(dp);
         }

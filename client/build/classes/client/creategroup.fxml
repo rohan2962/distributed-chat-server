@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="100.0" prefWidth="200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="client.CreategroupController">
+   <children>
+      <JFXTextField fx:id="groupname" layoutX="23.0" layoutY="37.0" />
+      <JFXButton fx:id="create" buttonType="RAISED" layoutX="69.0" layoutY="67.0" text="Create" />
+      <Label fx:id="grouperror" layoutX="38.0" layoutY="14.0" prefHeight="16.0" prefWidth="136.0" textFill="RED" />
+   </children>
+</AnchorPane>

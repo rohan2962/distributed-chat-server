@@ -5,11 +5,15 @@
  */
 package client;
 
+import com.google.gson.Gson;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawer.DrawerDirection;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,6 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -52,17 +57,100 @@ public class GroupController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        int i, flag = 0;
         groupname.setText(Client.groupid);
+        String s = groupname.getText();
+        if (Client.mp.containsKey(s)) {
+            s = Client.mp.get(s);
+        }
+        for (i = 0; i < Client.grouplist.size(); i++) {
+            if (s.equals(Client.grouplist.get(i))) {
+                flag = 1;
+                break;
+            }
+        }
+        System.out.println(flag);
+        if (flag == 0) {
+            groupinfo.setText("Join Group");
+        } else {
+
+            if (Client.group_mess.containsKey(groupname.getText())) {
+                messages.setText(Client.group_mess.get(groupname.getText()));
+            } else {
+                message m = new message();
+                m.from = 0;
+                m.type = 8;
+                m.userid1 = Client.userid;
+                if (Client.mp.containsKey(groupname.getText())) {
+                    m.groupid = Client.mp.get(groupname.getText());
+                } else {
+                    m.groupid = groupname.getText();
+                }
+                Gson gson = new Gson();
+                Send send = new Send(gson.toJson(m));
+                send.start();
+            }
+        }
+        ScheduledService<Void> u = new ScheduledService<Void>() {
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    protected Void call() {
+                        Platform.runLater(() -> {
+                            updatemess();
+                        });
+
+                        return null;
+
+                    }
+                };
+
+            }
+        };
+        u.setPeriod(Duration.millis(500));
+        u.start();
+        // TODO
+        send.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (new_message.getText().length() != 0) {
+                    message me = new message();
+                    me.from = 0;
+                    me.type = 3;
+                    me.userid1 = Client.userid;
+                    me.message = Client.userid+": "+new_message.getText() + "\n";
+                    if (Client.mp.containsKey(groupname.getText())) {
+                        me.groupid = Client.mp.get(groupname.getText());
+                    } else {
+                        me.groupid = groupname.getText();
+                    }
+                    Gson gson = new Gson();
+                    Send send = new Send(gson.toJson(me));
+                    send.start();
+                    new_message.setText("");
+                }
+            }
+
+        });
+
         //drawer.close();
         groupinfo.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (groupinfo.getText().equals("Join Group")) {
-
+                    message m = new message();
+                    m.from = 0;
+                    m.type = 6;
+                    m.groupid = groupname.getText();
+                    m.userid1 = Client.userid;
+                    Gson gson = new Gson();
+                    Send s = new Send(gson.toJson(m));
+                    s.start();
+                    groupinfo.setText("Group Info");
                 } else {
                     ScrollPane sidepane = new ScrollPane();
+                    sidepane.setPrefSize(100, 400);
                     Accordion acc = new Accordion();
+                    acc.setPrefSize(90, 390);
                     TitledPane tp = new TitledPane();
                     tp.setText("hi");
                     acc.getPanes().add(tp);
@@ -70,15 +158,9 @@ public class GroupController implements Initializable {
                     //drawer.getChildren().add(acc);
                     drawer.setSidePane(sidepane);
                     //drawer.setAlignment(Pos.TOP_RIGHT);
-                    drawer.setPrefSize(150, 325);
-                    drawer.setDirection(DrawerDirection.LEFT);
-                    Parent x = borderpane.getParent().getParent().getParent();
-                    while (x.getClass() != BorderPane.class) {
-                        x = x.getParent();
-                    }
-                    BorderPane root = (BorderPane) x;
-                    //BorderPane root=(BorderPane)borderpane.getParent();
-                    root.setRight(drawer);
+                    drawer.setPrefSize(100, 400);
+
+                    borderpane.setRight(drawer);
                     if (drawer.isShown()) {
                         drawer.close();
                     } else {
@@ -91,6 +173,13 @@ public class GroupController implements Initializable {
 
         });
         //drawer.setSidePane(sidePane);
+    }
+
+    void updatemess() {
+        if (Client.group_mess.containsKey(groupname.getText()) && !messages.getText().equals(Client.group_mess.containsKey(groupname.getText()))) {
+
+            messages.setText(Client.group_mess.get(groupname.getText()));
+        }
     }
 
 }

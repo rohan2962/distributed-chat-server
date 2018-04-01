@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.MainviewController">
     <children>
-        <AnchorPane prefHeight="75.0" prefWidth="200.0" >
+        <AnchorPane prefHeight="75.0" prefWidth="220.0" style="-fx-background-color: #bb11ff;">
             <children>
-                <ImageView fx:id="profile_pic" fitHeight="75.0" fitWidth="75.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" />
-                <Label fx:id="username" layoutX="90.0" layoutY="14.0" prefHeight="16.0" prefWidth="100.0"  />
-                <Label fx:id="gender" layoutX="122.0" layoutY="38.0" prefHeight="16.0" prefWidth="75.0" />
+                <ImageView fx:id="profile_pic" fitHeight="60.0" fitWidth="63.0" layoutX="6.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                <Label fx:id="username" layoutX="82.0" layoutY="10.0" prefHeight="16.0" prefWidth="107.0" textFill="WHITE">
+               <font>
+                  <Font name="System Bold Italic" size="17.0" />
+               </font></Label>
+                <Label fx:id="gender" layoutX="84.0" layoutY="36.0" prefHeight="16.0" prefWidth="53.0" textFill="WHITE" />
+            <JFXButton fx:id="creategroup" layoutX="144.0" layoutY="31.0" prefHeight="29.0" prefWidth="70.0" text="Create Group">
+               <font>
+                  <Font size="8.0" />
+               </font>
+            </JFXButton>
             </children>
         </AnchorPane>
         <ScrollPane layoutX="0.0" layoutY="75.0" prefHeight="325.0" prefWidth="220.0">

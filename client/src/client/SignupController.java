@@ -121,7 +121,9 @@ public class SignupController implements Initializable {
                         Send t1 = new Send(mess);
                         t1.start();
                         while (!Client.message_received) {
+
                             Thread.sleep(10);
+
                         }
                         message m1 = (message) Client.recv_m.clone();
                         if (m1.ans) {
@@ -191,29 +193,44 @@ public class SignupController implements Initializable {
                         Send t1 = new Send(mess);
                         t1.start();
                         while (!Client.message_received) {
-                            try {
-                                Thread.sleep(10);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+
+                            Thread.sleep(10);
+
                         }
                         message m1 = (message) Client.recv_m.clone();
                         if (m1.ans) {
 
                             login_error.setText("Successful Login.");
-                            Client.gender=m1.gender;
-                            Client.pic=m1.pic;
-                            Client.userid=m1.userid1;
+                            Client.gender = m1.gender;
+                            Client.pic = m1.pic;
+                            Client.userid = m1.userid1;
                             StringTokenizer st = new StringTokenizer(m1.message.substring(1), ",");
-                            while(st.hasMoreTokens()){
-                                Client.grouplist.add(st.nextToken());
+
+                            while (st.hasMoreTokens()) {
+                                String s = st.nextToken();
+                                String s1 = s;
+                                if (s.contains("<->")) {
+                                    s=s.replaceAll("<->", "");
+                                    if (s.contains(Client.userid)) {
+                                        s=s.replaceAll(Client.userid, "");
+                                        Client.mp.put(s, s1);
+                                        Client.revmp.put(s1, s);
+                                    }
+                                }
+
+                                Client.groups.add(s);
                             }
-                            Parent x= login_error.getParent();
-                            while(x.getClass()!=BorderPane.class){
-                                x=x.getParent();
+                            StringTokenizer st1 = new StringTokenizer(m1.groupid.substring(1), ",");
+                            System.out.println(m1.groupid);
+                            while (st1.hasMoreTokens()) {
+                                Client.grouplist.add(st1.nextToken());
                             }
-                            BorderPane bp = (BorderPane)x;
-                            Node root=FXMLLoader.load(getClass().getResource("mainview.fxml"));
+                            Parent x = login_error.getParent();
+                            while (x.getClass() != BorderPane.class) {
+                                x = x.getParent();
+                            }
+                            BorderPane bp = (BorderPane) x;
+                            Node root = FXMLLoader.load(getClass().getResource("mainview.fxml"));
                             bp.setCenter(root);
                             Client.recv_m = null;
                             Client.message_received = false;
@@ -226,6 +243,8 @@ public class SignupController implements Initializable {
                     } catch (CloneNotSupportedException ex) {
                         Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
+                        Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InterruptedException ex) {
                         Logger.getLogger(SignupController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }

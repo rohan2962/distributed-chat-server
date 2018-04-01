@@ -39,7 +39,7 @@ public class SideServer {
         // TODO code application logic here
         ds = new DatagramSocket(3000);
         ds1 = new DatagramSocket();
-        ip = InetAddress.getByName("169.254.203.76");
+        ip = InetAddress.getByName("172.26.45.219");
         c = new connect();
         PreparedStatement stmt;
         stmt = c.con.prepareStatement("select * from user_details");
@@ -225,7 +225,7 @@ class Send extends Thread {
                         stmt.setString(1, messa);
                         stmt.executeUpdate();
                         m2.groupid = m1.groupid;
-                        m2.message = messa;
+                        
                         m2.from = 1;
                         m2.ans = true;
                     } else {
